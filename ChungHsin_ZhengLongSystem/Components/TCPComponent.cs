@@ -152,6 +152,11 @@ namespace ChungHsin_ZhengLongSystem.Components
                     {
                         slave.DataStore.CoilInputs.WritePoints(0, CHData.Fun2);
                         slave.DataStore.InputRegisters.WritePoints(0, CHData.Fun4);
+                        if (CHData.Fun4[0] == 1)
+                        {
+                            slave.DataStore.CoilDiscretes.WritePoints(0, CHData.Fun1);
+                            slave.DataStore.HoldingRegisters.WritePoints(0, CHData.Fun3);
+                        }
                     }
                     else//初次讀取
                     {
@@ -187,10 +192,13 @@ namespace ChungHsin_ZhengLongSystem.Components
                     CWP.Alarm = CHData.Fun2[105];
                     AH.Alarm = CHData.Fun2[107];
                     #endregion
-                    Manual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(20, 1)[0];//手自動
-                    TimeFalg = slave.DataStore.CoilDiscretes.ReadPoints(21, 1)[0];//時控控制
-                    AHManual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(22, 1)[0];
-                    AHTimeFlag = slave.DataStore.CoilDiscretes.ReadPoints(23, 1)[0];
+                    if (CHData.Fun4[0] == 2)
+                    {
+                        Manual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(20, 1)[0];//手自動
+                        TimeFalg = slave.DataStore.CoilDiscretes.ReadPoints(21, 1)[0];//時控控制
+                        AHManual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(22, 1)[0];
+                        AHTimeFlag = slave.DataStore.CoilDiscretes.ReadPoints(23, 1)[0];
+                    }
                     #endregion
                     ComponentTime = DateTime.Now;
                     //Console.WriteLine("TCPComponent");

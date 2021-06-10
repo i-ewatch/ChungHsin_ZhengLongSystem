@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ChungHsin_ZhengLongSystem.Protocols;
 
 namespace ChungHsin_ZhengLongSystem.Components
 {
@@ -49,65 +50,69 @@ namespace ChungHsin_ZhengLongSystem.Components
                 TimeSpan timeSpan = DateTime.Now.Subtract(ComponentTime);
                 if (timeSpan.TotalMilliseconds >= 1000)
                 {
-                    #region 冰機
-                    if (TCPComponent.Manual_AutoFlag.control)//自動
+                    CHData CHData = TCPComponent.AbsProtocol as CHData;
+                    if (CHData.Fun4[0] == 2)
                     {
-                        #region 開機程序
-                        if (TCPComponent.TimeFalg)//開機程序
+                        #region 冰機
+                        if (TCPComponent.Manual_AutoFlag.control)//自動
                         {
-                            if (TCPComponent.SoftWare_Control.Alarm)//冰機異常
+                            #region 開機程序
+                            if (TCPComponent.TimeFalg)//開機程序
                             {
-                                CH_Close();
-                            }
-                            else//冰機正常
-                            {
-                                if (TCPComponent.CWP.Alarm)//CWP異常
+                                if (TCPComponent.SoftWare_Control.Alarm)//冰機異常
                                 {
                                     CH_Close();
                                 }
-                                else//CWP正常
+                                else//冰機正常
                                 {
-                                    if (TCPComponent.CHP_1.Alarm)//CHP1異常
+                                    if (TCPComponent.CWP.Alarm)//CWP異常
                                     {
-                                        if (TCPComponent.CHP_2.Alarm)//CHP2異常
-                                        {
-                                            CH_Close();
-                                        }
-                                        else//CHP2正常
-                                        {
-                                            CH_Open(1);
-                                        }
+                                        CH_Close();
                                     }
-                                    else//CHP1正常
+                                    else//CWP正常
                                     {
-                                        CH_Open(0);
+                                        if (TCPComponent.CHP_1.Alarm)//CHP1異常
+                                        {
+                                            if (TCPComponent.CHP_2.Alarm)//CHP2異常
+                                            {
+                                                CH_Close();
+                                            }
+                                            else//CHP2正常
+                                            {
+                                                CH_Open(1);
+                                            }
+                                        }
+                                        else//CHP1正常
+                                        {
+                                            CH_Open(0);
+                                        }
                                     }
                                 }
                             }
+                            #endregion
+                            #region 關機程序
+                            else//關機程序
+                            {
+                                CH_Close();
+                            }
+                            #endregion
+                            if (TCPComponent.slave != null)
+                            {
+                                TCPComponent.AH.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.AH.StateIndex, 1)[0];
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
+                            }
                         }
-                        #endregion
-                        #region 關機程序
-                        else//關機程序
+                        else//手動
                         {
-                            CH_Close();
-                        }
-                        #endregion
-                        if (TCPComponent.slave != null)
-                        {
-                            TCPComponent.AH.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.AH.StateIndex, 1)[0];
-                            TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
-                        }
-                    }
-                    else//手動
-                    {
-                        if (TCPComponent.slave != null)
-                        {
-                            TCPComponent.SoftWare_Control.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.SoftWare_Control.StateIndex, 1)[0];
-                            TCPComponent.Alarm_Reset.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.Alarm_Reset.StateIndex, 1)[0];
-                            TCPComponent.CHP_1.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.CHP_1.StateIndex, 1)[0];
-                            TCPComponent.CHP_2.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.CHP_2.StateIndex, 1)[0];
-                            TCPComponent.CWP.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.CWP.StateIndex, 1)[0];
-                            TCPComponent.Output_Temp.value = TCPComponent.slave.DataStore.HoldingRegisters.ReadPoints(TCPComponent.Output_Temp.ValueIndex, 1)[0];
+                            if (TCPComponent.slave != null)
+                            {
+                                TCPComponent.SoftWare_Control.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.SoftWare_Control.StateIndex, 1)[0];
+                                TCPComponent.Alarm_Reset.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.Alarm_Reset.StateIndex, 1)[0];
+                                TCPComponent.CHP_1.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.CHP_1.StateIndex, 1)[0];
+                                TCPComponent.CHP_2.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.CHP_2.StateIndex, 1)[0];
+                                TCPComponent.CWP.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.CWP.StateIndex, 1)[0];
+                                TCPComponent.Output_Temp.value = TCPComponent.slave.DataStore.HoldingRegisters.ReadPoints(TCPComponent.Output_Temp.ValueIndex, 1)[0];
+                            }
                         }
                     }
                     #endregion

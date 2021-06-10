@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ChungHsin_ZhengLongSystem.Protocols;
 
 namespace ChungHsin_ZhengLongSystem.Components
 {
@@ -49,13 +50,43 @@ namespace ChungHsin_ZhengLongSystem.Components
                 TimeSpan timeSpan = DateTime.Now.Subtract(ComponentTime);
                 if (timeSpan.TotalMilliseconds >= 1000)
                 {
-                    #region 空調
-                    if (TCPComponent.AHManual_AutoFlag.control)//自動
+                    CHData CHData = TCPComponent.AbsProtocol as CHData;
+                    if (CHData.Fun4[0] == 2)
                     {
-                        #region 空調箱開機程序
-                        if (TCPComponent.AHTimeFlag)//空調箱開機程序
+                        #region 空調
+                        if (TCPComponent.AHManual_AutoFlag.control)//自動
                         {
-                            if (TCPComponent.AH.Alarm)//空調箱異常
+                            #region 空調箱開機程序
+                            if (TCPComponent.AHTimeFlag)//空調箱開機程序
+                            {
+                                if (TCPComponent.AH.Alarm)//空調箱異常
+                                {
+                                    if (TCPComponent.AH_State)
+                                    {
+                                        while (TCPComponent.AH_State)
+                                        {
+                                            TCPComponent.AH._State = true;
+                                            TCPComponent.AH.State = false;
+                                            Thread.Sleep(WriteTime);
+                                        }
+                                    }
+                                }
+                                else//空調箱正常
+                                {
+                                    if (!TCPComponent.AH_State)
+                                    {
+                                        while (!TCPComponent.AH_State)
+                                        {
+                                            TCPComponent.AH._State = false;
+                                            TCPComponent.AH.State = true;
+                                            Thread.Sleep(WriteTime);
+                                        }
+                                    }
+                                }
+                            }
+                            #endregion
+                            #region 空調箱關機程序
+                            else//空調箱關機程序
                             {
                                 if (TCPComponent.AH_State)
                                 {
@@ -67,44 +98,18 @@ namespace ChungHsin_ZhengLongSystem.Components
                                     }
                                 }
                             }
-                            else//空調箱正常
+                            #endregion
+                            if (TCPComponent.slave != null)
                             {
-                                if (!TCPComponent.AH_State)
-                                {
-                                    while (!TCPComponent.AH_State)
-                                    {
-                                        TCPComponent.AH._State = false;
-                                        TCPComponent.AH.State = true;
-                                        Thread.Sleep(WriteTime);
-                                    }
-                                }
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(5, new bool[] { TCPComponent.AH_State });
                             }
                         }
-                        #endregion
-                        #region 空調箱關機程序
-                        else//空調箱關機程序
+                        else//手動
                         {
-                            if (TCPComponent.AH_State)
+                            if (TCPComponent.slave != null)
                             {
-                                while (TCPComponent.AH_State)
-                                {
-                                    TCPComponent.AH._State = true;
-                                    TCPComponent.AH.State = false;
-                                    Thread.Sleep(WriteTime);
-                                }
+                                TCPComponent.AH.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.AH.StateIndex, 1)[0];
                             }
-                        }
-                        #endregion
-                        if (TCPComponent.slave != null)
-                        {
-                            TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(5, new bool[] { TCPComponent.AH_State });
-                        }
-                    }
-                    else//手動
-                    {
-                        if (TCPComponent.slave != null)
-                        {
-                            TCPComponent.AH.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.AH.StateIndex, 1)[0];
                         }
                     }
                     #endregion
