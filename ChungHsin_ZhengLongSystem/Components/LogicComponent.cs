@@ -98,7 +98,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #endregion
                             if (TCPComponent.slave != null)
                             {
-                                TCPComponent.AH.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.AH.StateIndex, 1)[0];
+                                //TCPComponent.AH.State = TCPComponent.slave.DataStore.CoilDiscretes.ReadPoints(TCPComponent.AH.StateIndex, 1)[0];
                                 TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                             }
                         }

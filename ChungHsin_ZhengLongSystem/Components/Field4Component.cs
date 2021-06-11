@@ -158,7 +158,6 @@ namespace ChungHsin_ZhengLongSystem.Components
                     {
                         if (!Alarm)
                         {
-                            _State = value;
                             try
                             {
                                 using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
@@ -166,6 +165,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                                     master = Factory.CreateMaster(client);//建立TCP通訊
                                     AbsProtocol.Write_State(master, StateIndex, value);
                                 }
+                                _State = value;
                             }
                             catch (Exception ex)
                             {
@@ -227,7 +227,6 @@ namespace ChungHsin_ZhengLongSystem.Components
                 {
                     if (value != _value)
                     {
-                        _value = value;
                         try
                         {
                             using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
@@ -235,6 +234,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 master = Factory.CreateMaster(client);//建立TCP通訊
                                 AbsProtocol.Write_Value(master, ValueIndex, value);
                             }
+                            _value = value;
                         }
                         catch (Exception ex)
                         {
