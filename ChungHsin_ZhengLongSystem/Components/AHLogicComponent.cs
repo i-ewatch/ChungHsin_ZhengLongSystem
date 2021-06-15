@@ -59,19 +59,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #region 空調箱開機程序
                             if (TCPComponent.AHTimeFlag)//空調箱開機程序
                             {
-                                if (TCPComponent.AH.Alarm)//空調箱異常
-                                {
-                                    if (TCPComponent.AH_State)
-                                    {
-                                        while (TCPComponent.AH_State)
-                                        {
-                                            TCPComponent.AH._State = true;
-                                            TCPComponent.AH.State = false;
-                                            Thread.Sleep(WriteTime);
-                                        }
-                                    }
-                                }
-                                else//空調箱正常
+                                if (!TCPComponent.AH.Alarm)//空調箱沒異常
                                 {
                                     if (!TCPComponent.AH_State)
                                     {
@@ -88,7 +76,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #region 空調箱關機程序
                             else//空調箱關機程序
                             {
-                                if (TCPComponent.AH_State)
+                                if (TCPComponent.AH_State && !TCPComponent.AH.Alarm)
                                 {
                                     while (TCPComponent.AH_State)
                                     {
@@ -114,7 +102,6 @@ namespace ChungHsin_ZhengLongSystem.Components
                     }
                     #endregion
                     ComponentTime = DateTime.Now;
-                    //Console.WriteLine("AHLogicComponent");
                 }
                 else
                 {

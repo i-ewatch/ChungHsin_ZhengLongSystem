@@ -2,6 +2,7 @@
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,6 +32,7 @@ namespace ChungHsin_ZhengLongSystem.Protocols
                 Connection = true;
             }
             catch (ThreadAbortException) { }
+            catch (IOException) { }
             catch (Exception ex)
             {
                 Connection = false;

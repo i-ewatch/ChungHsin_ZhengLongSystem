@@ -134,24 +134,26 @@ namespace ChungHsin_ZhengLongSystem.Components
             #region 冰機運轉
             if (TCPComponent.CH_State)//冰機運轉
             {
-                while (TCPComponent.CH_State)
+                while (TCPComponent.CH_State && !TCPComponent.SoftWare_Control.Alarm)
                 {
                     TCPComponent.SoftWare_Control._State = true;
                     TCPComponent.SoftWare_Control.State = false;
                     Thread.Sleep(WriteTime);
                 }
+                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                 Thread.Sleep(TCPComponent.Device.CTime);
                 #region CHP1運轉
                 if (TCPComponent.CHP_1_State)//CHP1運轉
                 {
-                    while (TCPComponent.CHP_1_State)
+                    while (TCPComponent.CHP_1_State && !TCPComponent.CHP_1.Alarm)
                     {
                         TCPComponent.CHP_1._State = true;
                         TCPComponent.CHP_1.State = false;
                         Thread.Sleep(WriteTime);
                     }
+                    TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                     #region CHP2運轉
-                    if (TCPComponent.CHP_2_State)//CHP2運轉
+                    if (TCPComponent.CHP_2_State && !TCPComponent.CHP_2.Alarm)//CHP2運轉
                     {
                         while (TCPComponent.CHP_2_State)
                         {
@@ -159,10 +161,11 @@ namespace ChungHsin_ZhengLongSystem.Components
                             TCPComponent.CHP_2.State = false;
                             Thread.Sleep(WriteTime);
                         }
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         Thread.Sleep(TCPComponent.Device.DTime);
                         if (TCPComponent.CWP_State)//CWP運轉
                         {
-                            while (TCPComponent.CWP_State)
+                            while (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
                             {
                                 TCPComponent.CWP._State = true;
                                 TCPComponent.CWP.State = false;
@@ -174,9 +177,10 @@ namespace ChungHsin_ZhengLongSystem.Components
                     #region CHP2停止
                     else//CHP2停止
                     {
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         if (TCPComponent.CWP_State)//CWP運轉
                         {
-                            while (TCPComponent.CWP_State)
+                            while (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
                             {
                                 TCPComponent.CWP._State = true;
                                 TCPComponent.CWP.State = false;
@@ -190,8 +194,9 @@ namespace ChungHsin_ZhengLongSystem.Components
                 #region CHP1停止
                 else//CHP1停止
                 {
+                    TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                     #region CHP2運轉
-                    if (TCPComponent.CHP_2_State)//CHP2運轉
+                    if (TCPComponent.CHP_2_State && !TCPComponent.CHP_2.Alarm)//CHP2運轉
                     {
                         while (TCPComponent.CHP_2_State)
                         {
@@ -199,8 +204,9 @@ namespace ChungHsin_ZhengLongSystem.Components
                             TCPComponent.CHP_2.State = false;
                             Thread.Sleep(WriteTime);
                         }
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         Thread.Sleep(TCPComponent.Device.DTime);
-                        if (TCPComponent.CWP_State)//CWP運轉
+                        if (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)//CWP運轉
                         {
                             while (TCPComponent.CWP_State)
                             {
@@ -214,9 +220,10 @@ namespace ChungHsin_ZhengLongSystem.Components
                     #region CHP2停止
                     else//CHP2停止
                     {
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         if (TCPComponent.CWP_State)//CWP運轉
                         {
-                            while (TCPComponent.CWP_State)
+                            while (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
                             {
                                 TCPComponent.CWP._State = true;
                                 TCPComponent.CWP.State = false;
@@ -232,17 +239,19 @@ namespace ChungHsin_ZhengLongSystem.Components
             #region 冰機停止
             else//冰機停止
             {
+                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                 #region CHP1運轉
                 if (TCPComponent.CHP_1_State)//CHP1運轉
                 {
-                    while (TCPComponent.CHP_1_State)
+                    while (TCPComponent.CHP_1_State && !TCPComponent.CHP_1.Alarm)
                     {
                         TCPComponent.CHP_1._State = true;
                         TCPComponent.CHP_1.State = false;
                         Thread.Sleep(WriteTime);
                     }
+                    TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                     #region CHP2運轉
-                    if (TCPComponent.CHP_2_State)//CHP2運轉
+                    if (TCPComponent.CHP_2_State && !TCPComponent.CHP_2.Alarm)//CHP2運轉
                     {
                         while (TCPComponent.CHP_2_State)
                         {
@@ -250,10 +259,11 @@ namespace ChungHsin_ZhengLongSystem.Components
                             TCPComponent.CHP_2.State = false;
                             Thread.Sleep(WriteTime);
                         }
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         Thread.Sleep(TCPComponent.Device.DTime);
                         if (TCPComponent.CWP_State)//CWP運轉
                         {
-                            while (TCPComponent.CWP_State)
+                            while (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
                             {
                                 TCPComponent.CWP._State = true;
                                 TCPComponent.CWP.State = false;
@@ -265,9 +275,10 @@ namespace ChungHsin_ZhengLongSystem.Components
                     #region CHP2停止
                     else//CHP2停止
                     {
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         if (TCPComponent.CWP_State)//CWP運轉
                         {
-                            while (TCPComponent.CWP_State)
+                            while (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
                             {
                                 TCPComponent.CWP._State = true;
                                 TCPComponent.CWP.State = false;
@@ -281,19 +292,21 @@ namespace ChungHsin_ZhengLongSystem.Components
                 #region CHP1停止
                 else//CHP1停止
                 {
+                    TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                     #region CHP2運轉
                     if (TCPComponent.CHP_2_State)//CHP2運轉
                     {
-                        while (TCPComponent.CHP_2_State)
+                        while (TCPComponent.CHP_2_State && !TCPComponent.CHP_2.Alarm)
                         {
                             TCPComponent.CHP_2._State = true;
                             TCPComponent.CHP_2.State = false;
                             Thread.Sleep(WriteTime);
                         }
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         Thread.Sleep(TCPComponent.Device.DTime);
                         if (TCPComponent.CWP_State)//CWP運轉
                         {
-                            while (TCPComponent.CWP_State)
+                            while (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
                             {
                                 TCPComponent.CWP._State = true;
                                 TCPComponent.CWP.State = false;
@@ -305,9 +318,10 @@ namespace ChungHsin_ZhengLongSystem.Components
                     #region CHP2停止
                     else//CHP2停止
                     {
+                        TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                         if (TCPComponent.CWP_State)//CWP運轉
                         {
-                            while (TCPComponent.CWP_State)
+                            while (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
                             {
                                 TCPComponent.CWP._State = true;
                                 TCPComponent.CWP.State = false;
@@ -338,7 +352,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                         {
                             TCPComponent.CHP_2._State = true;
                             TCPComponent.CHP_2.State = false;
-                        }                        
+                        }
                         #region CWP停止
                         if (!TCPComponent.CWP_State)//CWP停止
                         {
@@ -348,6 +362,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 TCPComponent.CWP.State = true;
                                 Thread.Sleep(WriteTime);
                             }
+                            TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                             Thread.Sleep(TCPComponent.Device.ATime);
                             #region CHP1停止
                             if (!TCPComponent.CHP_1_State)//CHP1停止
@@ -356,7 +371,9 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 {
                                     TCPComponent.CHP_1._State = false;
                                     TCPComponent.CHP_1.State = true;
+                                    Thread.Sleep(WriteTime);
                                 }
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 Thread.Sleep(TCPComponent.Device.BTime);
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
@@ -372,6 +389,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #region CHP1運轉
                             else//CHP1運轉
                             {
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
                                     while (!TCPComponent.CH_State)
@@ -388,6 +406,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                         #region CWP運轉
                         else//CWP運轉
                         {
+                            TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                             #region CHP1停止
                             if (!TCPComponent.CHP_1_State)//CHP1停止
                             {
@@ -395,7 +414,9 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 {
                                     TCPComponent.CHP_1._State = false;
                                     TCPComponent.CHP_1.State = true;
+                                    Thread.Sleep(WriteTime);
                                 }
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 Thread.Sleep(TCPComponent.Device.BTime);
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
@@ -411,6 +432,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #region CHP1運轉
                             else//CHP1運轉
                             {
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
                                     while (!TCPComponent.CH_State)
@@ -432,6 +454,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                         {
                             TCPComponent.CHP_1._State = true;
                             TCPComponent.CHP_1.State = false;
+                            Thread.Sleep(WriteTime);
                         }
                         #region CWP停止
                         if (!TCPComponent.CWP_State)//CWP停止
@@ -442,6 +465,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 TCPComponent.CWP.State = true;
                                 Thread.Sleep(WriteTime);
                             }
+                            TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                             Thread.Sleep(TCPComponent.Device.ATime);
                             #region CHP2停止
                             if (!TCPComponent.CHP_2_State)//CHP2停止
@@ -450,7 +474,9 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 {
                                     TCPComponent.CHP_2._State = false;
                                     TCPComponent.CHP_2.State = true;
+                                    Thread.Sleep(WriteTime);
                                 }
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 Thread.Sleep(TCPComponent.Device.BTime);
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
@@ -466,6 +492,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #region CHP2運轉
                             else//CHP2運轉
                             {
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
                                     while (!TCPComponent.CH_State)
@@ -482,6 +509,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                         #region CWP運轉
                         else//CWP運轉
                         {
+                            TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                             #region CHP2停止
                             if (!TCPComponent.CHP_2_State)//CHP2停止
                             {
@@ -489,7 +517,9 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 {
                                     TCPComponent.CHP_2._State = false;
                                     TCPComponent.CHP_2.State = true;
+                                    Thread.Sleep(WriteTime);
                                 }
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 Thread.Sleep(TCPComponent.Device.BTime);
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
@@ -505,6 +535,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #region  CHP2運轉
                             else//CHP2運轉
                             {
+                                TCPComponent.slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { TCPComponent.CH_State, TCPComponent.Alarm_Reset.State, TCPComponent.CHP_1_State, TCPComponent.CHP_2_State, TCPComponent.CWP_State });
                                 if (!TCPComponent.CH_State)//冰機停止
                                 {
                                     while (!TCPComponent.CH_State)

@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -164,9 +165,11 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 {
                                     master = Factory.CreateMaster(client);//建立TCP通訊
                                     AbsProtocol.Write_State(master, StateIndex, value);
+                                    Thread.Sleep(80);
                                 }
                                 _State = value;
                             }
+                            catch (IOException) { }
                             catch (Exception ex)
                             {
                                 Log.Error(ex, $"寫入狀態失敗 狀態名稱 : {StateName} Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
@@ -180,8 +183,11 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 {
                                     master = Factory.CreateMaster(client);//建立TCP通訊
                                     AbsProtocol.Write_State(master, StateIndex, false);
+                                    Thread.Sleep(80);
                                 }
+                                _State = value;
                             }
+                            catch (IOException) { }
                             catch (Exception ex)
                             {
                                 Log.Error(ex, $"寫入狀態失敗 狀態名稱 : {StateName} Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
@@ -233,6 +239,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                             {
                                 master = Factory.CreateMaster(client);//建立TCP通訊
                                 AbsProtocol.Write_Value(master, ValueIndex, value);
+                                Thread.Sleep(80);
                             }
                             _value = value;
                         }

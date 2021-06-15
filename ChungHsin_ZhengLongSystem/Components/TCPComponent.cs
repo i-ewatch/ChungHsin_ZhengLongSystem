@@ -198,6 +198,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                         TimeFalg = slave.DataStore.CoilDiscretes.ReadPoints(21, 1)[0];//時控控制
                         AHManual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(22, 1)[0];
                         AHTimeFlag = slave.DataStore.CoilDiscretes.ReadPoints(23, 1)[0];
+                       
                     }
                     #endregion
                     ComponentTime = DateTime.Now;
