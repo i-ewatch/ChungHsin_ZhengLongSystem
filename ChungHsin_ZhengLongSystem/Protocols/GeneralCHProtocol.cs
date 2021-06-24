@@ -36,7 +36,7 @@ namespace ChungHsin_ZhengLongSystem.Protocols
             catch (Exception ex)
             {
                 Connection = false;
-                Log.Error(ex, "分析失敗");
+                Log.Error(ex, $"分析失敗 IP : {Device.Location}, Port : {Device.Rate}");
             }
 
         }

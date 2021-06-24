@@ -1,5 +1,6 @@
 ﻿using ChungHsin_ZhengLongSystem.Configuration;
 using ChungHsin_ZhengLongSystem.Enums;
+using ChungHsin_ZhengLongSystem.Modules;
 using ChungHsin_ZhengLongSystem.Protocols;
 using NModbus;
 using Serilog;
@@ -33,6 +34,14 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// 設備類型
         /// </summary>
         public DeviceTypeEnum DeviceTypeEnum { get; set; }
+        /// <summary>
+        /// 寫入狀態
+        /// </summary>
+        public Queue<CoilStatus> CoilStatuses { get; set; } = new Queue<CoilStatus>();
+        /// <summary>
+        /// 寫入數值
+        /// </summary>
+        public Queue<HoldingRegister> HoldingRegisters { get; set; } = new Queue<HoldingRegister>();
 
         #region 控制物件
         /// <summary>
@@ -42,7 +51,7 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// <summary>
         /// 時控控制
         /// </summary>
-        public bool TimeFalg { get; set; }
+        public bool TimeFlag { get; set; }
         /// <summary>
         /// 空調箱手/自動功能
         /// </summary>
@@ -127,23 +136,16 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// </summary>
         public class Status
         {
+            public TCPComponent TCPComponent { get; set; }
             public string StateName { get; set; }
-            /// <summary>
-            /// 通訊建置類別(通用)
-            /// </summary>
-            public ModbusFactory Factory { get; set; }
-            /// <summary>
-            /// 通訊物件
-            /// </summary>
-            public AbsProtocol AbsProtocol { get; set; }
-            /// <summary>
-            /// master通訊物件
-            /// </summary>
-            public IModbusMaster master { get; set; }
             /// <summary>
             /// 設備資訊
             /// </summary>
             public Device Device { get; set; }
+            /// <summary>
+            /// 狀態回授
+            /// </summary>
+            public bool ResPonse { get; set; }
             /// <summary>
             /// 狀態編號
             /// </summary>
@@ -161,13 +163,16 @@ namespace ChungHsin_ZhengLongSystem.Components
                         {
                             try
                             {
-                                using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
+                                TCPComponent.CoilStatuses.Enqueue(new CoilStatus()
                                 {
-                                    master = Factory.CreateMaster(client);//建立TCP通訊
-                                    AbsProtocol.Write_State(master, StateIndex, value);
-                                    Thread.Sleep(80);
+                                    StateName = StateName,
+                                    StateIndex = StateIndex,
+                                    value = value
+                                });
+                                if (ResPonse == value)
+                                {
+                                    _State = value;
                                 }
-                                _State = value;
                             }
                             catch (IOException) { }
                             catch (Exception ex)
@@ -175,17 +180,19 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 Log.Error(ex, $"寫入狀態失敗 狀態名稱 : {StateName} Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
                             }
                         }
-                        else
+                        else//告警時
                         {
                             try
                             {
-                                using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
+                                TCPComponent.CoilStatuses.Enqueue(new CoilStatus()
                                 {
-                                    master = Factory.CreateMaster(client);//建立TCP通訊
-                                    AbsProtocol.Write_State(master, StateIndex, false);
-                                    Thread.Sleep(80);
+                                    StateIndex = StateIndex,
+                                    value = false
+                                });
+                                if (ResPonse == false)
+                                {
+                                    _State = false;
                                 }
-                                _State = value;
                             }
                             catch (IOException) { }
                             catch (Exception ex)
@@ -204,23 +211,16 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// </summary>
         public class Value
         {
+            public TCPComponent TCPComponent { get; set; }
             public string valueName { get; set; }
-            /// <summary>
-            /// 通訊建置類別(通用)
-            /// </summary>
-            public ModbusFactory Factory { get; set; }
-            /// <summary>
-            /// 通訊物件
-            /// </summary>
-            public AbsProtocol AbsProtocol { get; set; }
-            /// <summary>
-            /// master通訊物件
-            /// </summary>
-            public IModbusMaster master { get; set; }
             /// <summary>
             /// 設備資訊
             /// </summary>
             public Device Device { get; set; }
+            /// <summary>
+            /// 狀態回授
+            /// </summary>
+            public ushort ResPonse { get; set; }
             /// <summary>
             /// 寫入位址
             /// </summary>
@@ -235,13 +235,16 @@ namespace ChungHsin_ZhengLongSystem.Components
                     {
                         try
                         {
-                            using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
+                            TCPComponent.HoldingRegisters.Enqueue(new HoldingRegister()
                             {
-                                master = Factory.CreateMaster(client);//建立TCP通訊
-                                AbsProtocol.Write_Value(master, ValueIndex, value);
-                                Thread.Sleep(80);
+                                valueName = valueName,
+                                ValueIndex = ValueIndex,
+                                value = value
+                            });
+                            if (ResPonse == value)
+                            {
+                                _value = value;
                             }
-                            _value = value;
                         }
                         catch (Exception ex)
                         {
