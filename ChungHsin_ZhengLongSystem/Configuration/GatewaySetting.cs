@@ -9,6 +9,10 @@ namespace ChungHsin_ZhengLongSystem.Configuration
     public class GatewaySetting
     {
         /// <summary>
+        /// 案場編號
+        /// </summary>
+        public string CaseNo { get; set; }
+        /// <summary>
         /// 模擬IP 
         /// </summary>
         public string SlaveLocation { get; set; }
@@ -23,6 +27,10 @@ namespace ChungHsin_ZhengLongSystem.Configuration
     }
     public class Device
     {
+        /// <summary>
+        /// 設備編號
+        /// </summary>
+        public int RecNo { get; set; }
         /// <summary>
         /// 設備名稱
         /// </summary>

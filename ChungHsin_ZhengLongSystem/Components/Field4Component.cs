@@ -19,6 +19,10 @@ namespace ChungHsin_ZhengLongSystem.Components
     public class Field4Component : Component
     {
         /// <summary>
+        /// 案場編號
+        /// </summary>
+        public string CaseNo { get; set; }
+        /// <summary>
         /// 初次旗標
         /// </summary>
         public bool RunFlag { get; set; }

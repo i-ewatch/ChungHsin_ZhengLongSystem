@@ -20,8 +20,9 @@ namespace ChungHsin_ZhengLongSystem.Components
 {
     public partial class TCPComponent : Field4Component
     {
-        public TCPComponent(Device device, ModbusFactory factory, TcpListener SlaveTcpListener, IModbusSlaveNetwork Network)
+        public TCPComponent(Device device, ModbusFactory factory, TcpListener SlaveTcpListener, IModbusSlaveNetwork Network, string caseNo)
         {
+            CaseNo = caseNo;
             InitializeComponent();
             Device = device;
             slaveTcpListener = SlaveTcpListener;
@@ -69,7 +70,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                 {
                     case DeviceTypeEnum.RT80:
                         {
-                            GeneralCHProtocol protocol = new GeneralCHProtocol() { ID = (byte)Device.DeviceID, Device = Device };
+                            GeneralCHProtocol protocol = new GeneralCHProtocol() { ID = (byte)Device.DeviceID, Device = Device, CaseNo = CaseNo };
                             AbsProtocol = protocol;
                             SoftWare_Control = new Status() { StateName = "軟體遠控啟動", Device = Device, StateIndex = 0, TCPComponent = this };
                             Alarm_Reset = new Status() { StateName = "警報復歸", Device = Device, StateIndex = 1, TCPComponent = this };
@@ -82,7 +83,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                         break;
                     case DeviceTypeEnum.RT40_50_60:
                         {
-                            GeneralCHProtocol protocol = new GeneralCHProtocol() { ID = (byte)Device.DeviceID, Device = Device };
+                            GeneralCHProtocol protocol = new GeneralCHProtocol() { ID = (byte)Device.DeviceID, Device = Device, CaseNo = CaseNo };
                             AbsProtocol = protocol;
                             SoftWare_Control = new Status() { StateName = "軟體遠控啟動", Device = Device, StateIndex = 0, TCPComponent = this };
                             Alarm_Reset = new Status() { StateName = "警報復歸", Device = Device, StateIndex = 1, TCPComponent = this };

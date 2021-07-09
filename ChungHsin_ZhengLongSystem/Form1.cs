@@ -73,7 +73,7 @@ namespace ChungHsin_ZhengLongSystem
             int Index = 0;
             foreach (var Deviceitem in GatewaySetting.Devices)
             {
-                TCPComponent component = new TCPComponent(Deviceitem, Factory, slaveTcpListener, network);
+                TCPComponent component = new TCPComponent(Deviceitem, Factory, slaveTcpListener, network, GatewaySetting.CaseNo);
                 component.MyWorkState = true;
                 Field4Components.Add(component);
                 ConnectionUserControl connectionUserControl = new ConnectionUserControl(component) { Location = new Point(5 + 301 * (Index % 3), 10 + 35 * (Index / 3)) };

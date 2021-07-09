@@ -1,4 +1,5 @@
 ﻿using ChungHsin_ZhengLongSystem.Configuration;
+using MathLibrary;
 using NModbus;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,14 @@ namespace ChungHsin_ZhengLongSystem.Protocols
 {
     public abstract class AbsProtocol
     {
-
+        /// <summary>
+        /// 數學公式
+        /// </summary>
+        public MathClass MathClass = new MathClass();
+        /// <summary>
+        /// 案場編號
+        /// </summary>
+        public string CaseNo { get; set; }
         /// <summary>
         /// 連線旗標
         /// </summary>
