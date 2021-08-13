@@ -23,15 +23,25 @@ namespace ChungHsin_ZhengLongSystem.Views
         private TCPComponent TCPComponent { get; set; }
         public void TextChange()
         {
-            if (!TCPComponent.AbsProtocol.Connection)
+            if (TCPComponent.AbsProtocol != null)
             {
-                Connectionlabel.ForeColor = Color.Red;
-                Connectionlabel.Text = "斷線";
+                LastTimelabel.Text = TCPComponent.ConnectionTime.ToString("yyyy/MM/dd HH:mm:ss");
+                if (!TCPComponent.AbsProtocol.Connection)
+                {
+                    Connectionlabel.ForeColor = Color.Red;
+                    Connectionlabel.Text = "斷線";
+                }
+                else
+                {
+                    Connectionlabel.ForeColor = Color.Lime;
+                    Connectionlabel.Text = "連線";
+                }
             }
             else
             {
-                Connectionlabel.ForeColor = Color.Lime;
-                Connectionlabel.Text = "連線";
+                LastTimelabel.Text = "-";
+                Connectionlabel.ForeColor = Color.Red;
+                Connectionlabel.Text = "斷線";
             }
         }
     }

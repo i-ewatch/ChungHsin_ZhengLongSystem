@@ -136,6 +136,12 @@
     <Compile Include="Components\TCPComponent.Designer.cs">
       <DependentUpon>TCPComponent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\UpAPIComponent.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\UpAPIComponent.Designer.cs">
+      <DependentUpon>UpAPIComponent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\GatewaySetting.cs" />
     <Compile Include="Enums\ChilerStatusTypeEnum.cs" />
     <Compile Include="Enums\DeviceTypeEnum.cs" />

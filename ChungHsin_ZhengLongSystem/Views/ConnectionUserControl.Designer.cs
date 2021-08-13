@@ -30,21 +30,46 @@ namespace ChungHsin_ZhengLongSystem.Views
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.Connectionlabel = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.Namelabel = new System.Windows.Forms.Label();
+            this.Connectionlabel = new System.Windows.Forms.Label();
+            this.LastTimelabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.Connectionlabel);
-            this.panel1.Controls.Add(this.Namelabel);
+            this.panel1.Controls.Add(this.panel2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(296, 28);
+            this.panel1.Size = new System.Drawing.Size(296, 84);
             this.panel1.TabIndex = 0;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.LastTimelabel);
+            this.panel2.Controls.Add(this.Namelabel);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(225, 82);
+            this.panel2.TabIndex = 0;
+            // 
+            // Namelabel
+            // 
+            this.Namelabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Namelabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.Namelabel.Font = new System.Drawing.Font("新細明體", 12F);
+            this.Namelabel.Location = new System.Drawing.Point(0, 0);
+            this.Namelabel.Name = "Namelabel";
+            this.Namelabel.Size = new System.Drawing.Size(225, 42);
+            this.Namelabel.TabIndex = 4;
+            this.Namelabel.Text = "設備名稱";
+            this.Namelabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Connectionlabel
             // 
@@ -54,22 +79,22 @@ namespace ChungHsin_ZhengLongSystem.Views
             this.Connectionlabel.ForeColor = System.Drawing.Color.Red;
             this.Connectionlabel.Location = new System.Drawing.Point(225, 0);
             this.Connectionlabel.Name = "Connectionlabel";
-            this.Connectionlabel.Size = new System.Drawing.Size(69, 26);
-            this.Connectionlabel.TabIndex = 3;
+            this.Connectionlabel.Size = new System.Drawing.Size(69, 82);
+            this.Connectionlabel.TabIndex = 6;
             this.Connectionlabel.Text = "斷線";
             this.Connectionlabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // Namelabel
+            // LastTimelabel
             // 
-            this.Namelabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Namelabel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.Namelabel.Font = new System.Drawing.Font("新細明體", 12F);
-            this.Namelabel.Location = new System.Drawing.Point(0, 0);
-            this.Namelabel.Name = "Namelabel";
-            this.Namelabel.Size = new System.Drawing.Size(225, 26);
-            this.Namelabel.TabIndex = 2;
-            this.Namelabel.Text = "設備名稱";
-            this.Namelabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.LastTimelabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.LastTimelabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.LastTimelabel.Font = new System.Drawing.Font("新細明體", 12F);
+            this.LastTimelabel.Location = new System.Drawing.Point(0, 42);
+            this.LastTimelabel.Name = "LastTimelabel";
+            this.LastTimelabel.Size = new System.Drawing.Size(225, 42);
+            this.LastTimelabel.TabIndex = 5;
+            this.LastTimelabel.Text = "設備名稱";
+            this.LastTimelabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ConnectionUserControl
             // 
@@ -77,8 +102,9 @@ namespace ChungHsin_ZhengLongSystem.Views
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Name = "ConnectionUserControl";
-            this.Size = new System.Drawing.Size(296, 28);
+            this.Size = new System.Drawing.Size(296, 84);
             this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -87,6 +113,8 @@ namespace ChungHsin_ZhengLongSystem.Views
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label Connectionlabel;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label LastTimelabel;
         private System.Windows.Forms.Label Namelabel;
     }
 }

@@ -41,6 +41,10 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// 空調箱邏輯
         /// </summary>
         private AHLogicMethod AHLogicMethod { get; set; }
+        /// <summary>
+        /// 斷線時間
+        /// </summary>
+        public DateTime ConnectionTime { get; set; } = DateTime.Now;
         public TCPComponent(IContainer container)
         {
             container.Add(this);
@@ -58,6 +62,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                     master = Factory.CreateMaster(client);//建立TCP通訊
                     master.Transport.ReadTimeout = 2500;
                     master.Transport.WriteTimeout = 2500;
+                    master.Transport.Retries = 0;
                 }
                 catch (Exception ex)
                 {
@@ -180,6 +185,8 @@ namespace ChungHsin_ZhengLongSystem.Components
                         CHData CHData = AbsProtocol as CHData;
                         if (CHData.Connection)//連線
                         {
+                            ConnectionTime = DateTime.Now;
+                            slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { true });
                             #region 運轉狀態讀取
                             CH_State = CHData.Fun2[109];
                             CHP_1_State = CHData.Fun2[100];
@@ -250,7 +257,6 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 CWP.ResPonse = CHData.Fun1[CWP.StateIndex];
                                 AH.ResPonse = CHData.Fun1[AH.StateIndex];
                                 Output_Temp.ResPonse = CHData.Fun3[Output_Temp.ValueIndex];
-
                                 RunFlag = true;
                             }
                             #endregion
@@ -365,6 +371,11 @@ namespace ChungHsin_ZhengLongSystem.Components
                         else//斷線
                         {
                             client = null;
+                            TimeSpan ConnectiontimeSpan = DateTime.Now.Subtract(ConnectionTime);
+                            if (ConnectiontimeSpan.TotalSeconds >= 300)
+                            {
+                                slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
+                            }
                         }
                     }
                     else
@@ -375,10 +386,16 @@ namespace ChungHsin_ZhengLongSystem.Components
                             master = Factory.CreateMaster(client);//建立TCP通訊
                             master.Transport.ReadTimeout = 2500;
                             master.Transport.WriteTimeout = 2500;
+                            master.Transport.Retries = 0;
                         }
                         catch (Exception ex)
                         {
                             client = null;
+                            TimeSpan ConnectiontimeSpan = DateTime.Now.Subtract(ConnectionTime);
+                            if (ConnectiontimeSpan.TotalSeconds >= 300)
+                            {
+                                slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
+                            }
                             Log.Error(ex, $"連線失敗 IP : {Device.Location} , port : {Device.Rate}");
                         }
                     }
