@@ -38,6 +38,7 @@ namespace ChungHsin_ZhengLongSystem
             // 
             // Displaypanel
             // 
+            this.Displaypanel.AutoScroll = true;
             this.Displaypanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Displaypanel.Location = new System.Drawing.Point(0, 0);
             this.Displaypanel.Name = "Displaypanel";
@@ -52,7 +53,6 @@ namespace ChungHsin_ZhengLongSystem
             // 
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "中興正隆通訊間接軟體";
-            this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
             // Form1

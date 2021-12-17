@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -61,6 +62,7 @@ namespace ChungHsin_ZhengLongSystem
         {
             InitializeComponent();
             #region 禁止軟體重複開啟功能
+            Thread.Sleep(1500);
             string ProcessName = Process.GetCurrentProcess().ProcessName;
             Process[] p = Process.GetProcessesByName(ProcessName);
             if (p.Length > 1)
@@ -103,6 +105,7 @@ namespace ChungHsin_ZhengLongSystem
                 }
                 UpAPIComponent = new UpAPIComponent(Field4Components);
                 UpAPIComponent.MyWorkState = true;
+                Log.Information("系統開啟");
                 timer1.Interval = 1000;
                 timer1.Enabled = true;
             }
@@ -115,13 +118,22 @@ namespace ChungHsin_ZhengLongSystem
                 item.MyWorkState = false;
             }
             UpAPIComponent.MyWorkState = false;
+            Log.Information("系統關閉");
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            foreach (var item in connectionUserControls)
+            if (DateTime.Now >= Convert.ToDateTime("00:00:00")&& DateTime.Now < Convert.ToDateTime("00:00:01"))
             {
-                item.TextChange();
+                //Log.Information("系統關閉");
+                Application.Restart();
+            }
+            else
+            {
+                foreach (var item in connectionUserControls)
+                {
+                    item.TextChange();
+                }
             }
         }
 

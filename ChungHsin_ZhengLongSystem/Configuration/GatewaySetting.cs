@@ -28,6 +28,10 @@ namespace ChungHsin_ZhengLongSystem.Configuration
     public class Device
     {
         /// <summary>
+        /// 自動旗標
+        /// </summary>
+        public bool AutoFlag { get; set; }
+        /// <summary>
         /// 設備編號
         /// </summary>
         public int RecNo { get; set; }

@@ -40,6 +40,7 @@ namespace ChungHsin_ZhengLongSystem.Methods
                         {
                             new Device()
                             {
+                                AutoFlag = false,
                                 DeviceName = "設備1",
                                 DeviceTypeEnum = 0,
                                 Location = "127.0.0.1",

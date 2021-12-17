@@ -33,11 +33,10 @@ namespace ChungHsin_ZhengLongSystem.Protocols
                 }
                 Fun4 = master.ReadInputRegisters(ID, 0, 89);
                 Fun3 = master.ReadHoldingRegisters(ID, 0, 119);
-                //Updata_API();
                 Connection = true;
             }
             catch (ThreadAbortException) { }
-            catch (IOException) { }
+            catch (IOException ex) { Connection = false; Log.Error(ex, $"通訊失敗 IP : {Device.Location}, Port : {Device.Rate}"); }
             catch (Exception ex)
             {
                 Connection = false;
@@ -105,14 +104,14 @@ namespace ChungHsin_ZhengLongSystem.Protocols
                 }
                 #endregion
                 var client = new RestClient($"http://chem.api.igrand.com.tw" + "/api/CHRecive");
-                client.Timeout = -1;
+                client.Timeout = 1000;
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "application/json");
                 request.AddParameter("application/json", JsonConvert.SerializeObject(data), ParameterType.RequestBody);
                 IRestResponse response = client.Execute(request);
                 if (response.StatusDescription != "OK")
                 {
-                    Log.Error($"{Device.DeviceName} 資料上傳失敗，{response.Content}");
+                    Log.Error($"{Device.DeviceName} 接收軟體回覆，{response.Content}");
                 }
             }
             catch (Exception ex)
