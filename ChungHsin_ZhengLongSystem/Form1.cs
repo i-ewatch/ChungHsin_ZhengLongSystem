@@ -62,7 +62,6 @@ namespace ChungHsin_ZhengLongSystem
         {
             InitializeComponent();
             #region 禁止軟體重複開啟功能
-            Thread.Sleep(1500);
             string ProcessName = Process.GetCurrentProcess().ProcessName;
             Process[] p = Process.GetProcessesByName(ProcessName);
             if (p.Length > 1)
@@ -103,8 +102,8 @@ namespace ChungHsin_ZhengLongSystem
                     connectionUserControls.Add(connectionUserControl);
                     Index++;
                 }
-                UpAPIComponent = new UpAPIComponent(Field4Components);
-                UpAPIComponent.MyWorkState = true;
+                //UpAPIComponent = new UpAPIComponent(Field4Components);
+                //UpAPIComponent.MyWorkState = true;
                 Log.Information("系統開啟");
                 timer1.Interval = 1000;
                 timer1.Enabled = true;
@@ -117,16 +116,17 @@ namespace ChungHsin_ZhengLongSystem
             {
                 item.MyWorkState = false;
             }
-            UpAPIComponent.MyWorkState = false;
+            //UpAPIComponent.MyWorkState = false;
             Log.Information("系統關閉");
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (DateTime.Now >= Convert.ToDateTime("00:00:00")&& DateTime.Now < Convert.ToDateTime("00:00:01"))
+            DateTime date = Convert.ToDateTime("00:00:00");
+            if (DateTime.Now >=date && DateTime.Now < date.AddSeconds(1))
             {
-                //Log.Information("系統關閉");
                 Application.Restart();
+                Process.GetCurrentProcess()?.Kill();
             }
             else
             {

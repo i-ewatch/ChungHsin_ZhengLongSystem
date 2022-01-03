@@ -42,7 +42,7 @@ namespace ChungHsin_ZhengLongSystem
             this.Displaypanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Displaypanel.Location = new System.Drawing.Point(0, 0);
             this.Displaypanel.Name = "Displaypanel";
-            this.Displaypanel.Size = new System.Drawing.Size(909, 450);
+            this.Displaypanel.Size = new System.Drawing.Size(934, 504);
             this.Displaypanel.TabIndex = 0;
             // 
             // timer1
@@ -59,7 +59,7 @@ namespace ChungHsin_ZhengLongSystem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(909, 450);
+            this.ClientSize = new System.Drawing.Size(934, 504);
             this.Controls.Add(this.Displaypanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;

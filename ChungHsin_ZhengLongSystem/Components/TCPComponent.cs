@@ -204,7 +204,10 @@ namespace ChungHsin_ZhengLongSystem.Components
                     catch (Exception ex)
                     {
                         AbsProtocol.Connection = false;
-                        slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
+                        if (slave != null)
+                        {
+                            slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
+                        }
                         Log.Error(ex, $"Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
                         Thread.Sleep(80);
                     }
@@ -363,7 +366,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                                     logicMethod.CH_Close();
                                 }
                                 bool CHP_Button = false;//CHP虛擬按鈕
-                                if (CHP_1_State|| CHP_2_State)
+                                if (CHP_1_State || CHP_2_State)
                                 {
                                     CHP_Button = true;
                                 }
