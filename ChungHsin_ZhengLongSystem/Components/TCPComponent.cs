@@ -148,12 +148,47 @@ namespace ChungHsin_ZhengLongSystem.Components
                 TimeSpan timeSpan = DateTime.Now.Subtract(ComponentTime);
                 if (timeSpan.TotalMilliseconds >= 2000)
                 {
-                    //if (client != null && master != null)
-                    //{
-                    #region Master
-                    while (CoilStatuses.Count > 0)
+                    if (Device.ConnectionFlag)
                     {
-                        CoilStatus coil = CoilStatuses.Dequeue();
+                        #region Master
+                        while (CoilStatuses.Count > 0)
+                        {
+                            CoilStatus coil = CoilStatuses.Dequeue();
+                            try
+                            {
+                                using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
+                                {
+                                    master = Factory.CreateMaster(client);//建立TCP通訊
+                                    master.Transport.ReadTimeout = 2500;
+                                    master.Transport.WriteTimeout = 2500;
+                                    master.Transport.Retries = 0;
+                                    AbsProtocol.Write_State(master, coil.StateIndex, coil.value);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, $"寫入狀態失敗 狀態名稱 : {coil.StateName} Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
+                            }
+                        }
+                        while (HoldingRegisters.Count > 0)
+                        {
+                            HoldingRegister holdingRegister = HoldingRegisters.Dequeue();
+                            try
+                            {
+                                using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
+                                {
+                                    master = Factory.CreateMaster(client);//建立TCP通訊
+                                    master.Transport.ReadTimeout = 2500;
+                                    master.Transport.WriteTimeout = 2500;
+                                    master.Transport.Retries = 0;
+                                    AbsProtocol.Write_Value(master, holdingRegister.ValueIndex, holdingRegister.value);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, $"寫入數值失敗 數值名稱 : {holdingRegister.valueName} Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
+                            }
+                        }
                         try
                         {
                             using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
@@ -162,151 +197,172 @@ namespace ChungHsin_ZhengLongSystem.Components
                                 master.Transport.ReadTimeout = 2500;
                                 master.Transport.WriteTimeout = 2500;
                                 master.Transport.Retries = 0;
-                                AbsProtocol.Write_State(master, coil.StateIndex, coil.value);
+                                AbsProtocol.Read_Data(master);
                             }
                         }
+                        catch (ThreadAbortException) { }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, $"寫入狀態失敗 狀態名稱 : {coil.StateName} Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
-                        }
-                    }
-                    while (HoldingRegisters.Count > 0)
-                    {
-                        HoldingRegister holdingRegister = HoldingRegisters.Dequeue();
-                        try
-                        {
-                            using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
+                            AbsProtocol.Connection = false;
+                            if (slave != null)
                             {
-                                master = Factory.CreateMaster(client);//建立TCP通訊
-                                master.Transport.ReadTimeout = 2500;
-                                master.Transport.WriteTimeout = 2500;
-                                master.Transport.Retries = 0;
-                                AbsProtocol.Write_Value(master, holdingRegister.ValueIndex, holdingRegister.value);
+                                slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
                             }
+                            Log.Error(ex, $"Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
+                            Thread.Sleep(80);
                         }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, $"寫入數值失敗 數值名稱 : {holdingRegister.valueName} Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
-                        }
-                    }
-                    try
-                    {
-                        using (TcpClient client = new TcpClient(Device.Location, Device.Rate))
-                        {
-                            master = Factory.CreateMaster(client);//建立TCP通訊
-                            master.Transport.ReadTimeout = 2500;
-                            master.Transport.WriteTimeout = 2500;
-                            master.Transport.Retries = 0;
-                            AbsProtocol.Read_Data(master);
-                        }
-                    }
-                    catch (ThreadAbortException) { }
-                    catch (Exception ex)
-                    {
-                        AbsProtocol.Connection = false;
-                        if (slave != null)
-                        {
-                            slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
-                        }
-                        Log.Error(ex, $"Connect to device(IP : {Device.Location} 、 Port : {Device.Rate} ) failed.");
-                        Thread.Sleep(80);
-                    }
-                    #endregion
-                    CHData CHData = AbsProtocol as CHData;
-                    if (CHData.Connection)//連線
-                    {
-                        ConnectionTime = DateTime.Now;
-                        slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { true });
-                        #region 運轉狀態讀取
-                        CH_State = CHData.Fun2[109];
-                        CHP_1_State = CHData.Fun2[100];
-                        CHP_2_State = CHData.Fun2[102];
-                        CWP_State = CHData.Fun2[104];
-                        AH_State = CHData.Fun2[106];
                         #endregion
-                        #region 回授狀態讀取
-                        CHP_1.ResPonse = CHData.Fun1[CHP_1.StateIndex];
-                        CHP_2.ResPonse = CHData.Fun1[CHP_2.StateIndex];
-                        CWP.ResPonse = CHData.Fun1[CWP.StateIndex];
-                        AH.ResPonse = CHData.Fun1[AH.StateIndex];
-                        #endregion
-                        #region 警報
-                        switch (DeviceTypeEnum)
+                        CHData CHData = AbsProtocol as CHData;
+                        if (CHData.Connection)//連線
                         {
-                            case DeviceTypeEnum.RT80:
-                                {
-                                    SoftWare_Control.Alarm = CHData.Fun2[92];
-                                }
-                                break;
-                            case DeviceTypeEnum.RT40_50_60:
-                                {
-                                    SoftWare_Control.Alarm = CHData.Fun2[94];
-                                }
-                                break;
-                        }
-                        CHP_1.Alarm = CHData.Fun2[101];
-                        CHP_2.Alarm = CHData.Fun2[103];
-                        CWP.Alarm = CHData.Fun2[105];
-                        AH.Alarm = CHData.Fun2[107];
-                        #endregion
-                        #region Slave
-                        if (RunFlag)
-                        {
-                            slave.DataStore.CoilInputs.WritePoints(0, CHData.Fun2);
-                            slave.DataStore.InputRegisters.WritePoints(0, CHData.Fun4);
-                            if (CHData.Fun4[0] != 2)
-                            {
-                                slave.DataStore.CoilDiscretes.WritePoints(0, CHData.Fun1);
-                                slave.DataStore.HoldingRegisters.WritePoints(0, CHData.Fun3);
-                            }
-                        }
-                        else//初次讀取
-                        {
-                            slave.DataStore.CoilDiscretes.WritePoints(20, new bool[] { Device.AutoFlag, false, true, false });
-                            slave.DataStore.CoilDiscretes.WritePoints(0, CHData.Fun1);
-                            slave.DataStore.CoilInputs.WritePoints(0, CHData.Fun2);
-                            slave.DataStore.HoldingRegisters.WritePoints(0, CHData.Fun3);
-                            slave.DataStore.InputRegisters.WritePoints(0, CHData.Fun4);
-                            SoftWare_Control._State = CHData.Fun1[SoftWare_Control.StateIndex];
-                            Alarm_Reset._State = CHData.Fun1[Alarm_Reset.StateIndex];
-                            if (CHData.Fun1[CHP_1.StateIndex])
-                            {
-                                CHP_1._State = CHData.Fun1[CHP_1.StateIndex];
-                                CHP_2._State = CHData.Fun1[CHP_1.StateIndex];
-                            }
-                            else if (CHData.Fun1[CHP_2.StateIndex])
-                            {
-                                CHP_1._State = CHData.Fun1[CHP_2.StateIndex];
-                                CHP_2._State = CHData.Fun1[CHP_2.StateIndex];
-                            }
-                            CWP._State = CHData.Fun1[CWP.StateIndex];
-                            AH._State = CHData.Fun1[AH.StateIndex];
-
-                            SoftWare_Control.ResPonse = CHData.Fun1[SoftWare_Control.StateIndex];
+                            ConnectionTime = DateTime.Now;
+                            slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { true });
+                            #region 運轉狀態讀取
+                            CH_State = CHData.Fun2[109];
+                            CHP_1_State = CHData.Fun2[100];
+                            CHP_2_State = CHData.Fun2[102];
+                            CWP_State = CHData.Fun2[104];
+                            AH_State = CHData.Fun2[106];
+                            #endregion
+                            #region 回授狀態讀取
                             CHP_1.ResPonse = CHData.Fun1[CHP_1.StateIndex];
                             CHP_2.ResPonse = CHData.Fun1[CHP_2.StateIndex];
                             CWP.ResPonse = CHData.Fun1[CWP.StateIndex];
                             AH.ResPonse = CHData.Fun1[AH.StateIndex];
-                            Output_Temp.ResPonse = CHData.Fun3[Output_Temp.ValueIndex];
-                            RunFlag = true;
-                        }
-                        #endregion
-                        #region 遠控功能
-                        if (CHData.Fun4[0] == 2)
-                        {
-                            SoftWare_Control.ResPonse = CHData.Fun1[SoftWare_Control.StateIndex];
-                            Manual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(20, 1)[0];//冰機手自動
-                            TimeFlag = slave.DataStore.CoilDiscretes.ReadPoints(21, 1)[0];//冰機時控控制
-                            AHManual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(22, 1)[0];//空調箱手自動
-                            AHTimeFlag = slave.DataStore.CoilDiscretes.ReadPoints(23, 1)[0];//空調箱時控控制
-                            #region 冰機邏輯
-                            if (Manual_AutoFlag.control)//冰機自動
+                            #endregion
+                            #region 警報
+                            switch (DeviceTypeEnum)
                             {
-                                if (TimeFlag)//啟動
+                                case DeviceTypeEnum.RT80:
+                                    {
+                                        SoftWare_Control.Alarm = CHData.Fun2[92];
+                                    }
+                                    break;
+                                case DeviceTypeEnum.RT40_50_60:
+                                    {
+                                        SoftWare_Control.Alarm = CHData.Fun2[94];
+                                    }
+                                    break;
+                            }
+                            CHP_1.Alarm = CHData.Fun2[101];
+                            CHP_2.Alarm = CHData.Fun2[103];
+                            CWP.Alarm = CHData.Fun2[105];
+                            AH.Alarm = CHData.Fun2[107];
+                            #endregion
+                            #region Slave
+                            if (RunFlag)
+                            {
+                                slave.DataStore.CoilInputs.WritePoints(0, CHData.Fun2);
+                                slave.DataStore.InputRegisters.WritePoints(0, CHData.Fun4);
+                                if (CHData.Fun4[0] != 2)
                                 {
-                                    #region 開機程序
+                                    slave.DataStore.CoilDiscretes.WritePoints(0, CHData.Fun1);
+                                    slave.DataStore.HoldingRegisters.WritePoints(0, CHData.Fun3);
+                                }
+                            }
+                            else//初次讀取
+                            {
+                                slave.DataStore.CoilDiscretes.WritePoints(20, new bool[] { Device.AutoFlag, false, true, false });
+                                slave.DataStore.CoilDiscretes.WritePoints(0, CHData.Fun1);
+                                slave.DataStore.CoilInputs.WritePoints(0, CHData.Fun2);
+                                slave.DataStore.HoldingRegisters.WritePoints(0, CHData.Fun3);
+                                slave.DataStore.InputRegisters.WritePoints(0, CHData.Fun4);
+                                SoftWare_Control._State = CHData.Fun1[SoftWare_Control.StateIndex];
+                                Alarm_Reset._State = CHData.Fun1[Alarm_Reset.StateIndex];
+                                if (CHData.Fun1[CHP_1.StateIndex])
+                                {
+                                    CHP_1._State = CHData.Fun1[CHP_1.StateIndex];
+                                    CHP_2._State = CHData.Fun1[CHP_1.StateIndex];
+                                }
+                                else if (CHData.Fun1[CHP_2.StateIndex])
+                                {
+                                    CHP_1._State = CHData.Fun1[CHP_2.StateIndex];
+                                    CHP_2._State = CHData.Fun1[CHP_2.StateIndex];
+                                }
+                                CWP._State = CHData.Fun1[CWP.StateIndex];
+                                AH._State = CHData.Fun1[AH.StateIndex];
 
-                                    if (SoftWare_Control.Alarm)//冰機異常
+                                SoftWare_Control.ResPonse = CHData.Fun1[SoftWare_Control.StateIndex];
+                                CHP_1.ResPonse = CHData.Fun1[CHP_1.StateIndex];
+                                CHP_2.ResPonse = CHData.Fun1[CHP_2.StateIndex];
+                                CWP.ResPonse = CHData.Fun1[CWP.StateIndex];
+                                AH.ResPonse = CHData.Fun1[AH.StateIndex];
+                                Output_Temp.ResPonse = CHData.Fun3[Output_Temp.ValueIndex];
+                                RunFlag = true;
+                            }
+                            #endregion
+                            #region 遠控功能
+                            if (CHData.Fun4[0] == 2)
+                            {
+                                SoftWare_Control.ResPonse = CHData.Fun1[SoftWare_Control.StateIndex];
+                                Manual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(20, 1)[0];//冰機手自動
+                                TimeFlag = slave.DataStore.CoilDiscretes.ReadPoints(21, 1)[0];//冰機時控控制
+                                AHManual_AutoFlag.control = slave.DataStore.CoilDiscretes.ReadPoints(22, 1)[0];//空調箱手自動
+                                AHTimeFlag = slave.DataStore.CoilDiscretes.ReadPoints(23, 1)[0];//空調箱時控控制
+                                #region 冰機邏輯
+                                if (Manual_AutoFlag.control)//冰機自動
+                                {
+                                    if (TimeFlag)//啟動
+                                    {
+                                        #region 開機程序
+
+                                        if (SoftWare_Control.Alarm)//冰機異常
+                                        {
+                                            if (logicMethod.ChilerStatus == 4)
+                                            {
+                                                logicMethod.ChilerStatus = 3;
+                                            }
+                                            logicMethod.AlarmStaus = 3;
+                                            logicMethod.CH_Close();
+                                        }
+                                        else//冰機正常
+                                        {
+                                            if (CWP.Alarm)//CWP異常
+                                            {
+                                                if (logicMethod.ChilerStatus == 4)
+                                                {
+                                                    logicMethod.ChilerStatus = 3;
+                                                }
+                                                logicMethod.AlarmStaus = 1;
+                                                logicMethod.CH_Close();
+                                            }
+                                            else//CWP正常
+                                            {
+                                                if (CHP_1.Alarm)//CHP1異常
+                                                {
+                                                    if (CHP_2.Alarm)//CHP2異常
+                                                    {
+                                                        if (logicMethod.ChilerStatus == 4)
+                                                        {
+                                                            logicMethod.ChilerStatus = 3;
+                                                        }
+                                                        logicMethod.AlarmStaus = 2;
+                                                        logicMethod.CH_Close();
+                                                    }
+                                                    else//CHP2正常
+                                                    {
+                                                        if (logicMethod.ChilerStatus == -1)
+                                                        {
+                                                            logicMethod.ChilerStatus = 0;
+                                                        }
+                                                        logicMethod.AlarmStaus = 0;
+                                                        logicMethod.CH_Open(2);
+                                                    }
+                                                }
+                                                else//CHP1正常
+                                                {
+                                                    if (logicMethod.ChilerStatus == -1)
+                                                    {
+                                                        logicMethod.ChilerStatus = 0;
+                                                    }
+                                                    logicMethod.AlarmStaus = 0;
+                                                    logicMethod.CH_Open(1);
+                                                }
+                                            }
+                                        }
+                                        #endregion
+                                    }
+                                    else//關閉
                                     {
                                         if (logicMethod.ChilerStatus == 4)
                                         {
@@ -314,134 +370,57 @@ namespace ChungHsin_ZhengLongSystem.Components
                                         }
                                         logicMethod.CH_Close();
                                     }
-                                    else//冰機正常
+                                    bool CHP_Button = false;//CHP虛擬按鈕
+                                    if (CHP_1_State || CHP_2_State)
                                     {
-                                        if (CWP.Alarm)//CWP異常
-                                        {
-                                            if (logicMethod.ChilerStatus == 4)
-                                            {
-                                                logicMethod.ChilerStatus = 3;
-                                            }
-                                            logicMethod.CH_Close();
-                                        }
-                                        else//CWP正常
-                                        {
-                                            if (CHP_1.Alarm)//CHP1異常
-                                            {
-                                                if (CHP_2.Alarm)//CHP2異常
-                                                {
-                                                    if (logicMethod.ChilerStatus == 4)
-                                                    {
-                                                        logicMethod.ChilerStatus = 3;
-                                                    }
-                                                    logicMethod.CH_Close();
-                                                }
-                                                else//CHP2正常
-                                                {
-                                                    if (logicMethod.ChilerStatus == -1)
-                                                    {
-                                                        logicMethod.ChilerStatus = 0;
-                                                    }
-                                                    logicMethod.CH_Open(2);
-                                                }
-                                            }
-                                            else//CHP1正常
-                                            {
-                                                if (logicMethod.ChilerStatus == -1)
-                                                {
-                                                    logicMethod.ChilerStatus = 0;
-                                                }
-                                                logicMethod.CH_Open(1);
-                                            }
-                                        }
+                                        CHP_Button = true;
                                     }
-                                    #endregion
-                                }
-                                else//關閉
-                                {
-                                    if (logicMethod.ChilerStatus == 4)
+                                    else
                                     {
-                                        logicMethod.ChilerStatus = 3;
+                                        CHP_Button = false;
                                     }
-                                    logicMethod.CH_Close();
+                                    slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { CH_State, Alarm_Reset.State, CHP_Button, CHP_2_State, CWP_State });
                                 }
-                                bool CHP_Button = false;//CHP虛擬按鈕
-                                if (CHP_1_State || CHP_2_State)
+                                else//冰機手動
                                 {
-                                    CHP_Button = true;
+                                    SoftWare_Control.State = slave.DataStore.CoilDiscretes.ReadPoints(SoftWare_Control.StateIndex, 1)[0];
+                                    Alarm_Reset.State = slave.DataStore.CoilDiscretes.ReadPoints(Alarm_Reset.StateIndex, 1)[0];
+                                    CHP_1.State = slave.DataStore.CoilDiscretes.ReadPoints(CHP_1.StateIndex, 1)[0];
+                                    CHP_2.State = slave.DataStore.CoilDiscretes.ReadPoints(CHP_2.StateIndex, 1)[0];
+                                    CWP.State = slave.DataStore.CoilDiscretes.ReadPoints(CWP.StateIndex, 1)[0];
+                                    Output_Temp.value = slave.DataStore.HoldingRegisters.ReadPoints(Output_Temp.ValueIndex, 1)[0];
                                 }
-                                else
+                                #endregion
+                                #region 空調箱邏輯
+                                if (AHManual_AutoFlag.control)//空調箱自動
                                 {
-                                    CHP_Button = false;
+                                    if (AHTimeFlag)
+                                    {
+                                        AHLogicMethod.AH_Opent();
+                                    }
+                                    else
+                                    {
+                                        AHLogicMethod.AH_Close();
+                                    }
+                                    AH._State = AH_State;
+                                    slave.DataStore.CoilDiscretes.WritePoints(5, new bool[] { AH_State });
                                 }
-                                slave.DataStore.CoilDiscretes.WritePoints(0, new bool[] { CH_State, Alarm_Reset.State, CHP_Button, CHP_2_State, CWP_State });
-                            }
-                            else//冰機手動
-                            {
-                                SoftWare_Control.State = slave.DataStore.CoilDiscretes.ReadPoints(SoftWare_Control.StateIndex, 1)[0];
-                                Alarm_Reset.State = slave.DataStore.CoilDiscretes.ReadPoints(Alarm_Reset.StateIndex, 1)[0];
-                                CHP_1.State = slave.DataStore.CoilDiscretes.ReadPoints(CHP_1.StateIndex, 1)[0];
-                                CHP_2.State = slave.DataStore.CoilDiscretes.ReadPoints(CHP_2.StateIndex, 1)[0];
-                                CWP.State = slave.DataStore.CoilDiscretes.ReadPoints(CWP.StateIndex, 1)[0];
-                                Output_Temp.value = slave.DataStore.HoldingRegisters.ReadPoints(Output_Temp.ValueIndex, 1)[0];
+                                else//空調箱手動
+                                {
+                                    AH.State = slave.DataStore.CoilDiscretes.ReadPoints(AH.StateIndex, 1)[0];
+                                }
+                                #endregion
                             }
                             #endregion
-                            #region 空調箱邏輯
-                            if (AHManual_AutoFlag.control)//空調箱自動
-                            {
-                                if (AHTimeFlag)
-                                {
-                                    AHLogicMethod.AH_Opent();
-                                }
-                                else
-                                {
-                                    AHLogicMethod.AH_Close();
-                                }
-                                AH._State = AH_State;
-                                slave.DataStore.CoilDiscretes.WritePoints(5, new bool[] { AH_State });
-                            }
-                            else//空調箱手動
-                            {
-                                AH.State = slave.DataStore.CoilDiscretes.ReadPoints(AH.StateIndex, 1)[0];
-                            }
-                            #endregion
+                            ComponentTime = DateTime.Now;
                         }
-                        #endregion
+                    }
+                    else
+                    {
+                        slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
                         ComponentTime = DateTime.Now;
                     }
-                    //    else//斷線
-                    //    {
-                    //        client = null;
-                    //        master = null;
-                    //        TimeSpan ConnectiontimeSpan = DateTime.Now.Subtract(ConnectionTime);
-                    //        if (ConnectiontimeSpan.TotalSeconds >= 300)
-                    //        {
-                    //            slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    try
-                    //    {
-                    //        client = new TcpClient(Device.Location, Device.Rate);
-                    //        master = Factory.CreateMaster(client);//建立TCP通訊
-                    //        master.Transport.ReadTimeout = 2500;
-                    //        master.Transport.WriteTimeout = 2500;
-                    //        master.Transport.Retries = 0;
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        client = null;
-                    //        master = null;
-                    //        TimeSpan ConnectiontimeSpan = DateTime.Now.Subtract(ConnectionTime);
-                    //        if (ConnectiontimeSpan.TotalSeconds >= 300)
-                    //        {
-                    //            slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
-                    //        }
-                    //        Log.Error(ex, $"連線失敗 IP : {Device.Location} , port : {Device.Rate}");
-                    //    }
-                    //}
+                 
                 }
                 else
                 {

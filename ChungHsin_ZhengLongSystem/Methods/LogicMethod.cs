@@ -11,7 +11,43 @@ namespace ChungHsin_ZhengLongSystem.Methods
 {
     public class LogicMethod
     {
+        /// <summary>
+        /// 冰機狀態機
+        /// </summary>
         private int chilerstatus = 4;
+        private int alarmstaus = 0;
+        /// <summary>
+        /// 異常旗標
+        /// </summary>
+        public int AlarmStaus
+        {
+            get { return alarmstaus; }
+            set
+            {
+                if (value != alarmstaus)
+                {
+                    alarmstaus = value;
+                    switch (value)
+                    {
+                        case 1:
+                            {
+                                Log.Information($"{TCPComponent.Device.DeviceName} 冷卻水泵-異常 時間 : " + DateTime.Now.ToString());
+                            }
+                            break;
+                        case 2:
+                            {
+                                Log.Information($"{TCPComponent.Device.DeviceName} 冰水泵-異常 時間 : " + DateTime.Now.ToString());
+                            }
+                            break;
+                        case 3:
+                            {
+                                Log.Information($"{TCPComponent.Device.DeviceName} 冰機-異常 時間 : " + DateTime.Now.ToString());
+                            }
+                            break;
+                    }
+                }
+            }
+        }
         /// <summary>
         /// 冰機時間控制
         /// </summary>
@@ -66,8 +102,7 @@ namespace ChungHsin_ZhengLongSystem.Methods
                             {
                                 TCPComponent.CWP._State = false;
                                 ChilerTime = DateTime.Now;
-                                Log.Information($"{TCPComponent.Device.DeviceName} 冷卻水泵關閉 時間 : "+ ChilerTime);
-                                //Console.WriteLine(ChilerTime + " 冷卻水泵關閉");
+                                Log.Information($"{TCPComponent.Device.DeviceName} 冷卻水泵關閉 時間 : " + ChilerTime);
                                 ChilerStatus = -1;
                             }
                         }
@@ -91,7 +126,6 @@ namespace ChungHsin_ZhengLongSystem.Methods
                                 TCPComponent.CHP_2._State = false;
                                 ChilerTime = DateTime.Now;
                                 Log.Information($"{TCPComponent.Device.DeviceName} 冰水泵1關閉 時間 : " + ChilerTime);
-                                //Console.WriteLine(ChilerTime + " 冰水泵1關閉");
                                 ChilerStatus = 0;
                             }
                         }
@@ -114,7 +148,6 @@ namespace ChungHsin_ZhengLongSystem.Methods
                                 TCPComponent.CHP_2._State = false;
                                 TCPComponent.CHP_1._State = false;
                                 Log.Information($"{TCPComponent.Device.DeviceName} 冰水泵2關閉 時間 : " + ChilerTime);
-                                //Console.WriteLine(ChilerTime + " 冰水泵2關閉");
                                 ChilerStatus = 0;
                             }
                         }
@@ -133,8 +166,6 @@ namespace ChungHsin_ZhengLongSystem.Methods
                             TCPComponent.SoftWare_Control._State = false;
                             ChilerTime = DateTime.Now;
                             Log.Information($"{TCPComponent.Device.DeviceName} 冰機關閉 時間 : " + ChilerTime);
-                            //Console.WriteLine(ChilerTime + " 冰機關閉");
-
                             if (TCPComponent.CHP_2_State)
                             {
                                 ChilerStatus = 2;
@@ -178,7 +209,6 @@ namespace ChungHsin_ZhengLongSystem.Methods
                             TCPComponent.CWP._State = true;
                             ChilerTime = DateTime.Now;
                             Log.Information($"{TCPComponent.Device.DeviceName} 冷卻水泵開啟 時間 : " + ChilerTime);
-                            //Console.WriteLine(ChilerTime + " 冷卻水泵開啟");
                             if (CHPOpen == 1)
                             {
                                 if (!TCPComponent.CHP_1_State)
@@ -221,7 +251,6 @@ namespace ChungHsin_ZhengLongSystem.Methods
                                 TCPComponent.CHP_2._State = true;
                                 ChilerTime = DateTime.Now;
                                 Log.Information($"{TCPComponent.Device.DeviceName} 冰水泵1開啟 時間 : " + ChilerTime);
-                                //Console.WriteLine(ChilerTime + " 冰水泵1開啟");
                                 ChilerStatus = 3;
                             }
                         }
@@ -244,7 +273,6 @@ namespace ChungHsin_ZhengLongSystem.Methods
                                 TCPComponent.CHP_2._State = true;
                                 ChilerTime = DateTime.Now;
                                 Log.Information($"{TCPComponent.Device.DeviceName} 冰水泵2開啟 時間 : " + ChilerTime);
-                                //Console.WriteLine(ChilerTime + " 冰水泵2開啟");
                                 ChilerStatus = 3;
                             }
                         }
@@ -265,7 +293,6 @@ namespace ChungHsin_ZhengLongSystem.Methods
                                 TCPComponent.SoftWare_Control._State = true;
                                 ChilerTime = DateTime.Now;
                                 Log.Information($"{TCPComponent.Device.DeviceName} 冰機開啟 時間 : " + ChilerTime);
-                                //Console.WriteLine(ChilerTime + " 冰機開啟");
                                 ChilerStatus = 4;
                             }
                         }

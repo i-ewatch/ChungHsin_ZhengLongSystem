@@ -52,10 +52,30 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// 手/自動功能
         /// </summary>
         public Control Manual_AutoFlag { get; set; } = new Control();
+        public bool timeflag { get; set; } = false;
         /// <summary>
         /// 時控控制
         /// </summary>
-        public bool TimeFlag { get; set; }
+        public bool TimeFlag
+        {
+            get
+            { return timeflag; }
+            set
+            {
+                if (timeflag != value)
+                {
+                    timeflag = value;
+                    if (value)
+                    {
+                        Log.Information($"{Device.DeviceName} 時控-啟動流程");
+                    }
+                    else
+                    {
+                        Log.Information($"{Device.DeviceName} 時控-關閉流程");
+                    }
+                }
+            }
+        }
         /// <summary>
         /// 空調箱手/自動功能
         /// </summary>
