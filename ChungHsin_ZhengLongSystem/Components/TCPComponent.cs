@@ -107,11 +107,12 @@ namespace ChungHsin_ZhengLongSystem.Components
 
                 #region 冰機邏輯
                 logicMethod = new LogicMethod(this);
+                Manual_AutoFlag.LogicMethod = logicMethod;
                 #endregion
                 #region 空調箱邏輯
                 AHLogicMethod = new AHLogicMethod(this);
                 #endregion
-
+                
                 #endregion
                 ComponentThread = new Thread(ProtocolAnalysis);
                 ComponentThread.Start();
@@ -305,7 +306,6 @@ namespace ChungHsin_ZhengLongSystem.Components
                                     if (TimeFlag)//啟動
                                     {
                                         #region 開機程序
-
                                         if (SoftWare_Control.Alarm)//冰機異常
                                         {
                                             if (logicMethod.ChilerStatus == 4)
@@ -420,7 +420,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                         slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
                         ComponentTime = DateTime.Now;
                     }
-                 
+
                 }
                 else
                 {

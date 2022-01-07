@@ -15,6 +15,9 @@ namespace ChungHsin_ZhengLongSystem.Methods
         /// 冰機狀態機
         /// </summary>
         private int chilerstatus = 4;
+        /// <summary>
+        /// 錯誤訊息狀態機
+        /// </summary>
         private int alarmstaus = 0;
         /// <summary>
         /// 異常旗標
@@ -79,6 +82,66 @@ namespace ChungHsin_ZhengLongSystem.Methods
         {
             TCPComponent = component;
         }
+
+        #region 狀態機開機確認
+        /// <summary>
+        /// 狀態機開機確認
+        /// </summary>
+        /// <returns></returns>
+        public void Status_Start()
+        {
+            if (!TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
+            {
+                ChilerStatus = 0;
+            }
+            else if (!TCPComponent.CHP_1_State && !TCPComponent.CHP_1.Alarm)
+            {
+                ChilerStatus = 1;
+            }
+            else if (!TCPComponent.CHP_2_State && !TCPComponent.CHP_2.Alarm)
+            {
+                ChilerStatus = 2;
+            }
+            else if (!TCPComponent.CH_State && !TCPComponent.SoftWare_Control.Alarm)
+            {
+                ChilerStatus = 3;
+            }
+            else
+            {
+                ChilerStatus = 4;
+            }
+        }
+        #endregion
+        #region 狀態機關機確認
+        /// <summary>
+        /// 狀態機關機確認
+        /// </summary>
+        /// <returns></returns>
+        public void Status_Stop()
+        {
+            if (TCPComponent.CH_State && !TCPComponent.SoftWare_Control.Alarm)
+            {
+                ChilerStatus = 3;
+            }
+            else if (TCPComponent.CHP_2_State && !TCPComponent.CHP_2.Alarm)
+            {
+                ChilerStatus = 2;
+            }
+            else if (TCPComponent.CHP_1_State && !TCPComponent.CHP_1.Alarm)
+            {
+                ChilerStatus = 1;
+            }
+            else if (TCPComponent.CWP_State && !TCPComponent.CWP.Alarm)
+            {
+                ChilerStatus = 0;
+            }
+            else
+            {
+                ChilerStatus = 0;
+            }
+        }
+        #endregion
+
         #region 冰機關機流程
         /// <summary>
         /// 冰機關機流程

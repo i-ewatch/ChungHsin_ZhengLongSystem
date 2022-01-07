@@ -1,5 +1,6 @@
 ﻿using ChungHsin_ZhengLongSystem.Configuration;
 using ChungHsin_ZhengLongSystem.Enums;
+using ChungHsin_ZhengLongSystem.Methods;
 using ChungHsin_ZhengLongSystem.Modules;
 using ChungHsin_ZhengLongSystem.Protocols;
 using NModbus;
@@ -135,6 +136,7 @@ namespace ChungHsin_ZhengLongSystem.Components
         #region 手自動物件
         public class Control
         {
+            public LogicMethod LogicMethod { get; set; }
             /// <summary>
             /// 手/自動
             /// <para>False = 手動</para>
@@ -149,6 +151,10 @@ namespace ChungHsin_ZhengLongSystem.Components
                     if (value != _control)
                     {
                         _control = value;
+                        if (LogicMethod != null && value)
+                        {       
+                            LogicMethod.Status_Start();
+                        }
                     }
                 }
             }
