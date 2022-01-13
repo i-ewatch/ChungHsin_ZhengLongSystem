@@ -49,6 +49,10 @@ namespace ChungHsin_ZhengLongSystem
         /// 上傳物件
         /// </summary>
         public UpAPIComponent UpAPIComponent { get; set; }
+        /// <summary>
+        /// Line推播
+        /// </summary>
+        public LineNotifyComponent LineNotifyComponent { get; set; }
 
         /// <summary>
         /// 通訊物件
@@ -102,6 +106,8 @@ namespace ChungHsin_ZhengLongSystem
                     connectionUserControls.Add(connectionUserControl);
                     Index++;
                 }
+                LineNotifyComponent = new LineNotifyComponent(Field4Components);
+                LineNotifyComponent.MyWorkState = true; 
                 //UpAPIComponent = new UpAPIComponent(Field4Components);
                 //UpAPIComponent.MyWorkState = true;
                 Log.Information("系統開啟");
@@ -116,6 +122,7 @@ namespace ChungHsin_ZhengLongSystem
             {
                 item.MyWorkState = false;
             }
+            LineNotifyComponent.MyWorkState = false;
             //UpAPIComponent.MyWorkState = false;
             Log.Information("系統關閉");
         }

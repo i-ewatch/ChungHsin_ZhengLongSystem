@@ -28,6 +28,10 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// </summary>
         public bool RunFlag { get; set; }
         /// <summary>
+        /// 完整流程旗標
+        /// </summary>
+        public bool CompleteFlag { get; set; }
+        /// <summary>
         /// 通訊數值物件
         /// </summary>
         public AbsProtocol AbsProtocol { get; set; }

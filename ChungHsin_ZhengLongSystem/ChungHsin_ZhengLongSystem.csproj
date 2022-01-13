@@ -39,6 +39,9 @@
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.2.0.90\lib\net461\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="LineNotifyLibrary, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LineNotifyLibrary.1.0.2\lib\net461\LineNotifyLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="MathLibrary, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathLibrary.1.5.2\lib\net461\MathLibrary.dll</HintPath>
     </Reference>
@@ -71,6 +74,7 @@
       <HintPath>..\packages\System.AppContext.4.1.0\lib\net46\System.AppContext.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Console, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Console.4.0.0\lib\net46\System.Console.dll</HintPath>
     </Reference>
@@ -130,6 +134,12 @@
     <Compile Include="Components\Field4Component.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\LineNotifyComponent.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\LineNotifyComponent.Designer.cs">
+      <DependentUpon>LineNotifyComponent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\TCPComponent.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -143,6 +153,7 @@
       <DependentUpon>UpAPIComponent.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\GatewaySetting.cs" />
+    <Compile Include="Configuration\LineNotifySetting.cs" />
     <Compile Include="Enums\ChilerStatusTypeEnum.cs" />
     <Compile Include="Enums\DeviceTypeEnum.cs" />
     <Compile Include="Enums\GatewayTypeEnum.cs" />

@@ -44,7 +44,7 @@ namespace ChungHsin_ZhengLongSystem.Components
         /// <summary>
         /// 斷線時間
         /// </summary>
-        public DateTime ConnectionTime { get; set; } = DateTime.Now;
+        public DateTime ConnectionTime { get; set; } = Convert.ToDateTime("1990/01/01 00:00:00");
         public TCPComponent(IContainer container)
         {
             container.Add(this);
@@ -112,7 +112,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                 #region 空調箱邏輯
                 AHLogicMethod = new AHLogicMethod(this);
                 #endregion
-                
+
                 #endregion
                 ComponentThread = new Thread(ProtocolAnalysis);
                 ComponentThread.Start();
@@ -183,6 +183,7 @@ namespace ChungHsin_ZhengLongSystem.Components
                                     master.Transport.WriteTimeout = 2500;
                                     master.Transport.Retries = 0;
                                     AbsProtocol.Write_Value(master, holdingRegister.ValueIndex, holdingRegister.value);
+                                    Log.Information($"{Device.DeviceName} {holdingRegister.valueName} 被寫入 {holdingRegister.value} 數值");
                                 }
                             }
                             catch (Exception ex)
@@ -414,11 +415,13 @@ namespace ChungHsin_ZhengLongSystem.Components
                             #endregion
                             ComponentTime = DateTime.Now;
                         }
+                        CompleteFlag = true;
                     }
                     else
                     {
                         slave.DataStore.CoilDiscretes.WritePoints(24, new bool[] { false });
                         ComponentTime = DateTime.Now;
+                        CompleteFlag = true;
                     }
 
                 }

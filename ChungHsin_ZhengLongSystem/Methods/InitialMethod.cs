@@ -65,5 +65,26 @@ namespace ChungHsin_ZhengLongSystem.Methods
             }
             return setting;
         }
+        public static List<LineNotifySetting> LineNotify_Load()
+        {
+            List<LineNotifySetting> setting = null;
+            if (!Directory.Exists($"{MyWorkPath}\\stf"))
+                Directory.CreateDirectory($"{MyWorkPath}\\stf");
+            string SettingPath = $"{MyWorkPath}\\stf\\LineNotify.json";
+            if (File.Exists(SettingPath))
+            {
+                string json = File.ReadAllText(SettingPath, Encoding.UTF8);
+                setting = JsonConvert.DeserializeObject<List<LineNotifySetting>>(json);
+            }
+            return setting;
+        }
+        public static void LineNotify_Save(List<LineNotifySetting> setting)
+        {
+            if (!Directory.Exists($"{MyWorkPath}\\stf"))
+                Directory.CreateDirectory($"{MyWorkPath}\\stf");
+            string SettingPath = $"{MyWorkPath}\\stf\\LineNotify.json";
+            string output = JsonConvert.SerializeObject(setting, Formatting.Indented, new JsonSerializerSettings());
+            File.WriteAllText(SettingPath, output);
+        }
     }
 }

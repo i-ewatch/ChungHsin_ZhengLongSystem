@@ -22,6 +22,7 @@ namespace ChungHsin_ZhengLongSystem.Protocols
             {
                 Fun1 = master.ReadCoils(ID, 0, 20);
                 var fun2_1 = master.ReadInputs(ID, 0, 100);
+                Thread.Sleep(100);
                 var fun2_2 = master.ReadInputs(ID, 100, 87);
                 for (int i = 0; i < fun2_1.Length; i++)
                 {
@@ -31,7 +32,9 @@ namespace ChungHsin_ZhengLongSystem.Protocols
                 {
                     Fun2[100 + i] = fun2_2[i];
                 }
+                Thread.Sleep(100);
                 Fun4 = master.ReadInputRegisters(ID, 0, 89);
+                Thread.Sleep(100);
                 Fun3 = master.ReadHoldingRegisters(ID, 0, 119);
                 Connection = true;
             }
