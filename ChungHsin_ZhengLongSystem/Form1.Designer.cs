@@ -34,15 +34,16 @@ namespace ChungHsin_ZhengLongSystem
             this.Displaypanel = new System.Windows.Forms.Panel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Displaypanel
             // 
             this.Displaypanel.AutoScroll = true;
-            this.Displaypanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Displaypanel.Location = new System.Drawing.Point(0, 0);
+            this.Displaypanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.Displaypanel.Location = new System.Drawing.Point(0, 12);
             this.Displaypanel.Name = "Displaypanel";
-            this.Displaypanel.Size = new System.Drawing.Size(934, 504);
+            this.Displaypanel.Size = new System.Drawing.Size(934, 492);
             this.Displaypanel.TabIndex = 0;
             // 
             // timer1
@@ -55,13 +56,24 @@ namespace ChungHsin_ZhengLongSystem
             this.notifyIcon1.Text = "中興正隆通訊間接軟體";
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(934, 12);
+            this.button1.TabIndex = 1;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(934, 504);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.Displaypanel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "中興正隆通訊間接軟體";
@@ -79,6 +91,7 @@ namespace ChungHsin_ZhengLongSystem
         private System.Windows.Forms.Panel Displaypanel;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Button button1;
     }
 }
 

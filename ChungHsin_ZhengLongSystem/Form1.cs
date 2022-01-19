@@ -118,6 +118,7 @@ namespace ChungHsin_ZhengLongSystem
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            
             foreach (var item in Field4Components)
             {
                 item.MyWorkState = false;
@@ -161,20 +162,26 @@ namespace ChungHsin_ZhengLongSystem
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            if (WindowState == FormWindowState.Minimized)
-            {
-                this.Hide();
-                this.notifyIcon1.Visible = true;
-            }
-            else
-            {
-                this.notifyIcon1.Visible = false;
-            }
+            //if (WindowState == FormWindowState.Minimized)
+            //{
+            //    this.Hide();
+            //    this.notifyIcon1.Visible = true;
+            //}
+            //else
+            //{
+            //    this.notifyIcon1.Visible = false;
+            //}
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             Form1_Resize(sender, e);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Visible = false;
+            this.notifyIcon1.Visible = true;
         }
     }
 }
