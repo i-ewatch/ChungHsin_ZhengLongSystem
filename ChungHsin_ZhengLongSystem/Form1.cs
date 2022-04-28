@@ -65,26 +65,27 @@ namespace ChungHsin_ZhengLongSystem
         public Form1()
         {
             InitializeComponent();
+            #region Serilog initial
+            Log.Logger = new LoggerConfiguration()
+                        .WriteTo.Console()
+                        .WriteTo.File($"{AppDomain.CurrentDomain.BaseDirectory}\\log\\log-.txt",
+                                      rollingInterval: RollingInterval.Day,
+                                      outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                        .CreateLogger();        //宣告Serilog初始化
+            #endregion
             #region 禁止軟體重複開啟功能
             string ProcessName = Process.GetCurrentProcess().ProcessName;
             Process[] p = Process.GetProcessesByName(ProcessName);
             if (p.Length > 1)
             {
-                MessageBox.Show("軟體重複開啟");
+                //MessageBox.Show("軟體重複開啟");
+                Log.Information("軟體重複開啟");
                 OpenFlag = true;
                 Environment.Exit(1);
             }
             #endregion
             if (!OpenFlag)
             {
-                #region Serilog initial
-                Log.Logger = new LoggerConfiguration()
-                            .WriteTo.Console()
-                            .WriteTo.File($"{AppDomain.CurrentDomain.BaseDirectory}\\log\\log-.txt",
-                                          rollingInterval: RollingInterval.Day,
-                                          outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-                            .CreateLogger();        //宣告Serilog初始化
-                #endregion
                 GatewaySetting = InitialMethod.GatewaySettingLoad();
                 #region Slave
                 IPAddress address = new IPAddress(new byte[] { Convert.ToByte(GatewaySetting.SlaveLocation.Split('.')[0]), Convert.ToByte(GatewaySetting.SlaveLocation.Split('.')[1]), Convert.ToByte(GatewaySetting.SlaveLocation.Split('.')[2]), Convert.ToByte(GatewaySetting.SlaveLocation.Split('.')[3]) });
@@ -107,7 +108,7 @@ namespace ChungHsin_ZhengLongSystem
                     Index++;
                 }
                 LineNotifyComponent = new LineNotifyComponent(Field4Components);
-                LineNotifyComponent.MyWorkState = true; 
+                LineNotifyComponent.MyWorkState = true;
                 //UpAPIComponent = new UpAPIComponent(Field4Components);
                 //UpAPIComponent.MyWorkState = true;
                 Log.Information("系統開啟");
@@ -118,7 +119,7 @@ namespace ChungHsin_ZhengLongSystem
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
+
             foreach (var item in Field4Components)
             {
                 item.MyWorkState = false;
@@ -131,7 +132,7 @@ namespace ChungHsin_ZhengLongSystem
         private void timer1_Tick(object sender, EventArgs e)
         {
             DateTime date = Convert.ToDateTime("00:00:00");
-            if (DateTime.Now >=date && DateTime.Now < date.AddSeconds(1))
+            if (DateTime.Now >= date && DateTime.Now < date.AddSeconds(1))
             {
                 Application.Restart();
                 Process.GetCurrentProcess()?.Kill();
@@ -162,19 +163,20 @@ namespace ChungHsin_ZhengLongSystem
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            //if (WindowState == FormWindowState.Minimized)
-            //{
-            //    this.Hide();
-            //    this.notifyIcon1.Visible = true;
-            //}
-            //else
-            //{
-            //    this.notifyIcon1.Visible = false;
-            //}
+            if (WindowState == FormWindowState.Minimized)
+            {
+                this.Hide();
+                this.notifyIcon1.Visible = true;
+            }
+            else
+            {
+                this.notifyIcon1.Visible = false;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Location = new Point(0, 0);
             Form1_Resize(sender, e);
         }
 
