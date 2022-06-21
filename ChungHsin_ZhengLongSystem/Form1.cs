@@ -125,6 +125,7 @@ namespace ChungHsin_ZhengLongSystem
                 item.MyWorkState = false;
             }
             LineNotifyComponent.MyWorkState = false;
+            InitialMethod.Gateway_Save(GatewaySetting);
             //UpAPIComponent.MyWorkState = false;
             Log.Information("系統關閉");
         }

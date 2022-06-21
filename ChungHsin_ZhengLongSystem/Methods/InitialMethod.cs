@@ -65,6 +65,14 @@ namespace ChungHsin_ZhengLongSystem.Methods
             }
             return setting;
         }
+        public static void Gateway_Save(GatewaySetting setting)
+        {
+            if (!Directory.Exists($"{MyWorkPath}\\stf"))
+                Directory.CreateDirectory($"{MyWorkPath}\\stf");
+            string SettingPath = $"{MyWorkPath}\\stf\\Gateway.json";
+            string output = JsonConvert.SerializeObject(setting, Formatting.Indented, new JsonSerializerSettings());
+            File.WriteAllText(SettingPath, output);
+        }
         public static List<LineNotifySetting> LineNotify_Load()
         {
             List<LineNotifySetting> setting = null;
